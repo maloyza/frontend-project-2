@@ -1,5 +1,6 @@
 {
   "name": "@hexlet/code",
+  "type": "module",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/maloyza/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/maloyza/frontend-project-46/actions)",
   "main": "index.js",
@@ -8,7 +9,7 @@
     "lint": "eslint ."
   },
   "repository": {
-    "type": "module",
+    "type": "git",
     "url": "git+https://github.com/maloyza/frontend-project-46.git"
   },
   "author": "maloyza",
