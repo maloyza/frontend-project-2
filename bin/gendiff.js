@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { program } from '../node_modules/commander/index.js';
+import { program } from 'commander';
 
 
 program
