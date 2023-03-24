@@ -23,7 +23,7 @@ const formatDiff = (diff, depth = 1) => {
   return `{\r\n${lines.join('')}}`;
 };
 
-const genDiff = (data1, data2) => {
+const generateDiff = (data1, data2) => {
   const commonKeys = _.intersection(Object.keys(data1), Object.keys(data2));
   const removedKeys = _.difference(Object.keys(data1), Object.keys(data2));
   const addedKeys = _.difference(Object.keys(data2), Object.keys(data1));
@@ -43,10 +43,10 @@ const genDiff = (data1, data2) => {
   return Object.fromEntries(result);
 };
 
-const loadJsonFile = (path) => {
+export const loadJsonFile = (path) => {
   const fullPath = resolve(process.cwd(), path);
   const data = readFileSync(fullPath, { encoding: 'utf8', flag: 'r' });
   return JSON.parse(data);
 };
 
-export default (path1, path2) => formatDiff(genDiff(loadJsonFile(path1), loadJsonFile(path2)));
+export default (path1, path2) => formatDiff(generateDiff(loadJsonFile(path1), loadJsonFile(path2)));
