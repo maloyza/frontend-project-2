@@ -1,4 +1,3 @@
-/*  eslint linebreak-style: ["error", "windows"]  */
 // @ts-check
 
 import { expect, test } from '@jest/globals';

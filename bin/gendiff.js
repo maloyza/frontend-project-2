@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-/*  eslint linebreak-style: ["error", "windows"]  */
-
 import { program } from 'commander';
 import loadJSONFile from '../src/index.js';
 

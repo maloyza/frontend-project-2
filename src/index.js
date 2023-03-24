@@ -1,5 +1,3 @@
-/*  eslint linebreak-style: ["error", "windows"]  */
-
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import _ from 'lodash';
