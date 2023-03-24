@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { program } from 'commander';
 import loadJSONFile from '../src/index.js';
 
