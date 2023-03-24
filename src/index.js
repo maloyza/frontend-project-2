@@ -1,69 +1,54 @@
 /*  eslint linebreak-style: ["error", "windows"]  */
 
-import _ from 'lodash';
 import { readFileSync } from 'fs';
-import path from 'path';
+import { resolve } from 'path';
+import _ from 'lodash';
 
-function generateObjectDiff(obj, depth = 1) {
-  const indent = ' '.repeat(depth * 2 - 2);
-  const lines = Object.entries(obj).flatMap(([key, val]) => {
-    switch (val.status) {
-      case 'added':
-        return `${indent}+ ${key}: ${JSON.stringify(val.value, null, 2)}`.split('\n');
-      case 'removed':
-        return `${indent}- ${key}: ${JSON.stringify(val.value, null, 2)}`.split('\n');
-      case 'unchanged':
-        return `${indent}  ${key}: ${JSON.stringify(val.value, null, 2)}`.split('\n');
-      case 'changed':
-        return [
-          `${indent}- ${key}: ${JSON.stringify(val.value[0], null, 2)}`,
-          `${indent}+ ${key}: ${JSON.stringify(val.value[1], null, 2)}`,
-        ];
-      default:
-        return 1;
+const symbols = {
+  unchanged: ' ',
+  added: '+',
+  removed: '-',
+};
+
+const formatDiff = (diff, depth = 1) => {
+  const indent = '  '.repeat(depth);
+  const sortedKeys = Object.keys(diff).sort();
+  const lines = sortedKeys.map((key) => {
+    const {
+      status, value, valueBefore, valueAfter,
+    } = diff[key];
+    if (status === 'changed') {
+      return `${indent}${symbols.removed} ${key}: ${valueBefore}\n${indent}${symbols.added} ${key}: ${valueAfter}\n`;
     }
+    return `${indent}${symbols[status]} ${key}: ${value}\n`;
   });
-  return `{\n${lines.join('\n')}\n${' '.repeat(depth * 2 - 2)}}`;
-}
+  return `{\n${lines.join('')}}`;
+};
 
-function genDiff(obj1, obj2) {
-  const removedKeys = _.difference(Object.keys(obj1), Object.keys(obj2));
-  const addedKeys = _.difference(Object.keys(obj2), Object.keys(obj1));
-  const commonKeys = _.intersection(Object.keys(obj1), Object.keys(obj2));
-  const diff = {};
-  commonKeys.map((key) => {
-    const valBefore = obj1[key];
-    const valAfter = obj2[key];
-    if (valBefore === valAfter) {
-      diff[key] = { status: 'unchanged', value: valBefore };
-    } else {
-      diff[key] = { status: 'changed', value: [valBefore, valAfter] };
-    }
-    return null;
-  });
-  addedKeys.map((key) => {
-    diff[key] = { status: 'added', value: obj2[key] };
-    return null;
-  });
-  removedKeys.map((key) => {
-    diff[key] = { status: 'removed', value: obj1[key] };
-    return null;
-  });
+const genDiff = (data1, data2) => {
+  const commonKeys = _.intersection(Object.keys(data1), Object.keys(data2));
+  const removedKeys = _.difference(Object.keys(data1), Object.keys(data2));
+  const addedKeys = _.difference(Object.keys(data2), Object.keys(data1));
 
-  const diffResult = Object.keys(diff).sort().reduce((acc, key) => {
-    const result = { ...acc };
-    result[key] = diff[key];
-    return result;
-  }, {});
+  const result = [
+    ...commonKeys.map((key) => {
+      const value1 = data1[key];
+      const value2 = data2[key];
+      if (value1 === value2) {
+        return [key, { status: 'unchanged', value: value1 }];
+      }
+      return [key, { status: 'changed', valueBefore: value1, valueAfter: value2 }];
+    }),
+    ...addedKeys.map((key) => [key, { status: 'added', value: data2[key] }]),
+    ...removedKeys.map((key) => [key, { status: 'removed', value: data1[key] }]),
+  ];
+  return Object.fromEntries(result);
+};
 
-  return diffResult;
-}
+const loadJsonFile = (path) => {
+  const fullPath = resolve(process.cwd(), path);
+  const data = readFileSync(fullPath, { encoding: 'utf8', flag: 'r' });
+  return JSON.parse(data);
+};
 
-function loadJSON(pathToFile) {
-  const fullPath = path.resolve(process.cwd(), pathToFile);
-  const dataFile = readFileSync(fullPath, { encoding: 'utf8' });
-  const result = JSON.parse(dataFile);
-  return result;
-}
-
-export default (path1, path2) => generateObjectDiff(genDiff(loadJSON(path1), loadJSON(path2)));
+export default (path1, path2) => formatDiff(genDiff(loadJsonFile(path1), loadJsonFile(path2)));
