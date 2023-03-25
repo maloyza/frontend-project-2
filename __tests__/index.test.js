@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const pathFile1 = getFixturePath('file1.json');
 const pathFile2 = getFixturePath('file2.json');
-const pathFileOutput = getFixturePath('file_output');
+const pathFileOutput = getFixturePath('reference_file');
 const dataFileOutput = readFileSync(pathFileOutput, { encoding: 'utf8', flag: 'r' });
 
 test('testing gendiff', () => {
