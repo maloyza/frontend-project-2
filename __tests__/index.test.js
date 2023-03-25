@@ -17,5 +17,3 @@ const dataFileOutput = readFileSync(pathFileOutput, { encoding: 'utf8', flag: 'r
 test('testing gendiff', () => {
   expect(genDiff(pathFile1, pathFile2)).toBe(dataFileOutput);
 });
-
-//
