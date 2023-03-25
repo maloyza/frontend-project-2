@@ -16,11 +16,11 @@ const formatDiff = (diff, depth = 1) => {
       status, value, valueBefore, valueAfter,
     } = diff[key];
     if (status === 'changed') {
-      return `${indent}${symbols.removed} ${key}: ${valueBefore}\r\n${indent}${symbols.added} ${key}: ${valueAfter}\r\n`;
+      return `${indent}${symbols.removed} ${key}: ${valueBefore}\n${indent}${symbols.added} ${key}: ${valueAfter}\n`;
     }
-    return `${indent}${symbols[status]} ${key}: ${value}\r\n`;
+    return `${indent}${symbols[status]} ${key}: ${value}\n`;
   });
-  return `{\r\n${lines.join('')}}`;
+  return `{\n${lines.join('')}}`;
 };
 
 const generateDiff = (data1, data2) => {
