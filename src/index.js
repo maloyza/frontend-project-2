@@ -27,7 +27,6 @@ const generateDiff = (data1, data2) => {
   const commonKeys = _.intersection(Object.keys(data1), Object.keys(data2));
   const removedKeys = _.difference(Object.keys(data1), Object.keys(data2));
   const addedKeys = _.difference(Object.keys(data2), Object.keys(data1));
-
   const result = [
     ...commonKeys.map((key) => {
       const value1 = data1[key];
