@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import parser from './parsers.js';
-import buildAST from './diff.js';
-import convertToAst from './stylish.js';
+import compilerAST from './diff.js';
+import formatter from './formatters/index.js';
 
 export const loadFile = (filePath) => {
   const fileData = readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
@@ -11,8 +11,11 @@ export const loadFile = (filePath) => {
   return fileContent;
 };
 
-export default (filePath1, filePath2) => {
+const generateDiff = (filePath1, filePath2, formatName) => {
   const fileContent1 = loadFile(filePath1);
   const fileContent2 = loadFile(filePath2);
-  return convertToAst(buildAST(fileContent1, fileContent2));
+  const astDifference = compilerAST(fileContent1, fileContent2);
+  return formatter(astDifference, formatName);
 };
+
+export default generateDiff;

@@ -40,6 +40,6 @@ const formatDiff = (ast, depth = 1) => {
   return result.join('');
 };
 
-const convertToAst = (astDiff) => `{\n${formatDiff(astDiff)}}`;
+const convertToAst = (diffAst) => `{\n${formatDiff(diffAst)}}`;
 
 export default convertToAst;

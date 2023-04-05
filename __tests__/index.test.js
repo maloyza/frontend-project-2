@@ -15,10 +15,16 @@ const pathFile2yml = getFixturePath('file2.yml');
 const pathFile1json = getFixturePath('file1.json');
 const pathFile2json = getFixturePath('file2.json');
 
-const pathFileOutput = getFixturePath('reference_file');
+const pathFileOutput = getFixturePath('reference_file1.txt');
 const dataFileOutput = readFileSync(pathFileOutput, { encoding: 'utf8', flag: 'r' });
+const dataFileOutput2 = readFileSync(pathFileOutput, { encoding: 'utf8', flag: 'r' });
 
 test('testing gendiff', () => {
   expect(genDiff(pathFile1yml, pathFile2yml)).toBe(dataFileOutput);
   expect(genDiff(pathFile1json, pathFile2json)).toBe(dataFileOutput);
+});
+
+test('testing gendiff plain', () => {
+  expect(genDiff(pathFile1yml, pathFile2yml)).toBe(dataFileOutput2);
+  expect(genDiff(pathFile1json, pathFile2json)).toBe(dataFileOutput2);
 });

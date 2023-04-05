@@ -4,12 +4,8 @@ const buildAst = (data1, data2) => {
   const keys = _.union(_.keys(data1), _.keys(data2));
   const sortKeys = _.sortBy(keys);
   const result = sortKeys.map((key) => {
-    if (!_.has(data2, key)) {
-      return { key, status: 'removed', value: data1[key] };
-    }
-    if (!_.has(data1, key)) {
-      return { key, status: 'added', value: data2[key] };
-    }
+    if (!_.has(data2, key)) return { key, status: 'removed', value: data1[key] };
+    if (!_.has(data1, key)) return { key, status: 'added', value: data2[key] };
     if (_.isPlainObject(data1[key]) && _.isPlainObject(data2[key])) {
       return {
         key,
