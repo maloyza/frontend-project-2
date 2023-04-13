@@ -1,29 +1,27 @@
 import _ from 'lodash';
 
-const buildAst = (data1, data2) => {
-  const keys = _.union(_.keys(data1), _.keys(data2));
-  const sortKeys = _.sortBy(keys);
-  const result = sortKeys.map((key) => {
-    if (!_.has(data2, key)) return { key, status: 'removed', value: data1[key] };
-    if (!_.has(data1, key)) return { key, status: 'added', value: data2[key] };
-    if (_.isPlainObject(data1[key]) && _.isPlainObject(data2[key])) {
-      return {
-        key,
-        status: 'nested',
-        children: buildAst(data1[key], data2[key]),
-      };
+export default function compilerAST(fileContent1, fileContent2) {
+  const keys = _.sortBy(_.union(Object.keys(fileContent1), Object.keys(fileContent2)));
+  const getDifference = (array1, array2, key) => {
+    switch (true) {
+      case _.has(array1, key) && _.has(array2, key):
+        if (_.isObject(array1[key]) && _.isObject(array2[key])) {
+          return { key, status: 'nested', children: compilerAST(array1[key], array2[key]) };
+        }
+        if (array1[key] === array2[key]) {
+          return { key, status: 'unupdated', value: array1[key] };
+        }
+        return {
+          key,
+          status: 'updated',
+          valueBefore: array1[key],
+          valueAfter: array2[key],
+        };
+      case _.has(array1, key):
+        return { key, status: 'removed', value: array1[key] };
+      default:
+        return { key, status: 'added', value: array2[key] };
     }
-    if (!_.isEqual(data1[key], data2[key])) {
-      return {
-        key,
-        status: 'changed',
-        value1: data1[key],
-        value2: data2[key],
-      };
-    }
-    return { key, status: 'unchanged', value: data1[key] };
-  });
-  return result;
-};
-
-export default buildAst;
+  };
+  return keys.map((key) => getDifference(fileContent1, fileContent2, key));
+}

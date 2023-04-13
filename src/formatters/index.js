@@ -1,9 +1,7 @@
-import convertToAst from './stylish.js';
-import diffAst from './plain.js';
+import stylish from './stylish.js';
+import plain from './plain.js';
+import json from './json.js';
 
-const formatters = {
-  stylish: convertToAst,
-  plain: diffAst,
-};
+const formatters = { stylish, plain, json };
 
-export default (ast, formatName = 'stylish') => formatters[formatName](ast);
+export default (ast, formatName) => formatters[formatName](ast);

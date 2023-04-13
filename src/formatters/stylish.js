@@ -1,45 +1,42 @@
 import _ from 'lodash';
 
 const symbols = {
-  unchanged: ' ',
+  unupdated: ' ',
   added: '+',
   removed: '-',
   nested: ' ',
 };
 
-const indent = (depth) => ' '.repeat(depth);
+const indentSize = 4;
+const makeIndent = (depth, spaces = 2) => ' '.repeat(depth * indentSize - spaces);
 
-const convertToFlat = (data) => {
-  if (!_.isPlainObject(data)) return data;
-  return _.keys(data).map((key) => ({ key, status: 'unchanged', value: data[key] }));
-};
+function stringify(value, depth) {
+  if (!_.isObject(value)) {
+    return value;
+  }
+  const indent = makeIndent(depth);
+  const entries = Object.entries(value).map(([key, val]) => `${indent}  ${key}: ${stringify(val, depth + 1)}`);
+  return `{\n${entries.join('\n')}\n${makeIndent(depth - 1)}  }`;
+}
 
-const getObjectString = (data, depth) => {
-  if (!_.isObject(data)) return data;
-  return _.keys(data).map((key) => `{\n  ${indent(depth + 4)}${key}: ${data[key]}\n  ${indent(depth)}}`);
-};
+function renderAstNode(node, depth) {
+  const {
+    key, value, valueBefore, valueAfter, status, children,
+  } = node;
+  const indent = makeIndent(depth);
 
-const formatDiff = (ast, depth = 1) => {
-  const result = [];
-  ast.forEach((elem) => {
-    if (elem.status === 'nested') {
-      result.push(`${indent(depth)}${symbols.nested} ${elem.key}: {\n`);
-      result.push(formatDiff(elem.children, depth + 4));
-      result.push(`${indent(depth)}  }\n`);
-    } else if (_.isPlainObject(elem.value)) {
-      result.push(`${indent(depth)}${symbols[elem.status]} ${elem.key}: {\n`);
-      result.push(formatDiff(convertToFlat(elem.value), depth + 4));
-      result.push(`${indent(depth)}  }\n`);
-    } else if (elem.status === 'changed') {
-      result.push(`${indent(depth)}${symbols.removed} ${elem.key}: ${getObjectString(elem.value1, depth)}\n`);
-      result.push(`${indent(depth)}${symbols.added} ${elem.key}: ${getObjectString(elem.value2, depth)}\n`);
-    } else {
-      result.push(`${indent(depth)}${symbols[elem.status]} ${elem.key}: ${elem.value}\n`);
-    }
-  });
-  return result.join('');
-};
+  switch (status) {
+    case 'added':
+    case 'removed':
+    case 'unupdated':
+      return `${indent}${symbols[status]} ${key}: ${stringify(value, depth + 1)}`;
+    case 'updated':
+      return `${indent}${symbols.removed} ${key}: ${stringify(valueBefore, depth + 1)}\n${indent}${symbols.added} ${key}: ${stringify(valueAfter, depth + 1)}`;
+    case 'nested':
+      return `${indent}${symbols[status]} ${key}: {\n${children.map((childNode) => renderAstNode(childNode, depth + 1)).join('\n')}\n${makeIndent(depth)}  }`;
+    default:
+      throw new Error(`Unknown status: ${status}`);
+  }
+}
 
-const convertToAst = (diffAst) => `{\n${formatDiff(diffAst)}}`;
-
-export default convertToAst;
+export default (astDifference) => `{\n${astDifference.map((node) => renderAstNode(node, 1)).join('\n')}\n}`;
