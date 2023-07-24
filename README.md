@@ -1,7 +1,5 @@
 <h1 align="center"> Вычислитель отличий </h2>
 
-### Hexlet tests and linter status:
-[![Actions Status](https://github.com/maloyza/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/maloyza/frontend-project-46/actions)
 [![Node CI](https://github.com/maloyza/frontend-project-46/actions/workflows/nodejs.yml/badge.svg)](https://github.com/maloyza/frontend-project-46/actions/workflows/nodejs.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f5cab21122591a09bc49/maintainability)](https://codeclimate.com/github/maloyza/frontend-project-46/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f5cab21122591a09bc49/test_coverage)](https://codeclimate.com/github/maloyza/frontend-project-46/test_coverage)
@@ -13,7 +11,7 @@
 		  <li> 
 		  	<p>Установка</p>
 		  	</li>
-		  	<pre>$git clone https://github.com/maloyza/frontend-project-46</br>$make install</pre>
+		  	<pre>$git clone https://github.com/maloyza/frontend-project-2</br>$make install</pre>
 		</ul>
 <h4> Демонстрация нахождения отличий в формате stylish.</h4>
 	<pre>node bin/gendiff.js __fixtures__/file1.json __fixtures__/file2.json</pre>
